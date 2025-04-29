@@ -1,0 +1,14 @@
+PyTorch Liver Tumor Segmentation with RegNet
+Overview
+This project implements a deep learning model for automatic liver tumor segmentation from CT scans using the LiTS (Liver Tumor Segmentation Challenge) dataset. It utilizes a pre-trained RegNet model as an efficient encoder combined with a custom convolutional decoder for pixel-wise mask generation.
+The primary goal is to demonstrate an end-to-end pipeline including data acquisition via the Kaggle API, memory-optimized data loading (slice-based), model training, inference on unseen volumes, and qualitative result visualization.
+Key Features
+Dataset: Leverages the publicly available LiTS dataset (NIfTI format).
+Data Handling: Automated download and setup using the Kaggle API within a Colab environment.
+Model: Employs a regnet_y_400mf backbone pre-trained on ImageNet as the encoder, paired with a U-Net-like convolutional decoder.
+Processing: Operates on 2D axial slices for memory efficiency during training and inference. Includes standard preprocessing steps (normalization, resizing).
+Training: Implemented using PyTorch, featuring Adam optimizer, BCEWithLogitsLoss, and Automatic Mixed Precision (AMP) support.
+Inference: Capable of loading the trained model and performing slice-by-slice segmentation on full 3D NIfTI volumes, saving results as NIfTI masks.
+Visualization: Provides qualitative assessment tools, displaying original slices, predicted masks, ground truth masks, overlays, boundary comparisons, and difference maps.
+Purpose
+This project serves as a practical example of applying modern deep learning techniques (specifically CNNs with transfer learning) to a common medical image segmentation task. It highlights efficient data handling and provides a basis for further exploration into medical image analysis.
