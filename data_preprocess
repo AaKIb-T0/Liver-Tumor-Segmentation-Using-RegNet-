@@ -1,0 +1,47 @@
+from google.colab import files
+
+print("Please upload your kaggle.json file:")
+uploaded = files.upload()
+
+# Check if upload was successful (optional but good practice)
+if 'kaggle.json' in uploaded:
+    print("kaggle.json uploaded successfully.")
+    # Set up the directory and permissions for the Kaggle library
+    !mkdir -p ~/.kaggle
+    !cp kaggle.json ~/.kaggle/
+    !chmod 600 ~/.kaggle/kaggle.json
+    print("Kaggle API configured.")
+else:
+    print("Upload failed or cancelled. Please run this cell again and upload kaggle.json.")
+
+
+  print("Checking contents of /content/ ...")
+!ls /content/
+
+# Often, the unzip creates a folder named after the dataset. Let's check common names:
+print("\nChecking contents of /content/liver-tumor-segmentation/ (if it exists)...")
+!ls /content/liver-tumor-segmentation/
+
+# Also check if files ended up directly in /content/
+print("\nLooking for .nii files directly in /content/ ...")
+!ls /content/*.nii /content/*.nii.gz 2>/dev/null || echo "No .nii/.nii.gz files found directly in /content/"
+
+
+# Create a single directory to hold all data
+!mkdir /content/lits_data
+
+# Move all segmentation files into the new directory
+print("Moving segmentation files...")
+!mv /content/segmentations/*.nii* /content/lits_data/  # *.nii* catches .nii and .nii.gz
+
+# Move all volume (image) files from all 'volume_pt*' folders into the new directory
+print("Moving volume files...")
+!mv /content/volume_pt*/*.nii* /content/lits_data/
+
+print("Files moved.")
+
+# Optional: Verify the files are there
+print("\nChecking contents of the new data folder:")
+!ls -lh /content/lits_data/ | head # Show first few files with sizes
+print("\nTotal number of NIfTI files in new folder:")
+!ls /content/lits_data/*.nii* | wc -l
