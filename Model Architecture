@@ -1,0 +1,41 @@
+Model Architecture
+The model employed is a custom segmentation architecture utilizing a pre-trained RegNet backbone as the encoder and a series of Transpose Convolution layers for the decoder/upsampling path.
+Encoder (Contracting Path):
+Uses regnet_y_400mf pre-trained on ImageNet, leveraging transfer learning for effective feature extraction.
+Consists of the standard RegNet stages (stem + multiple trunk blocks) which progressively reduce spatial resolution while increasing feature map depth.
+The output feature map from the final stage of the RegNet trunk serves as the input to the decoder.
+Decoder (Expansive Path):
+Takes the compressed feature map from the encoder.
+Employs a sequence of ConvTranspose2d layers to symmetrically upsample the feature map back towards the original input resolution.
+Each upsampling step is typically followed by standard Conv2d layers and ReLU activation functions to refine the features at that scale.
+Note: This specific implementation uses a direct upsampling path without the skip connections found in standard U-Net architectures.
+Output Layer:
+A final Conv2d layer with a kernel size of 1x1 maps the high-resolution feature map from the last decoder stage to a single output channel.
+This single channel represents the raw prediction logits for the segmentation mask. For inference, these logits are passed through a Sigmoid function and thresholded (e.g., at 0.5) to produce the final binary mask.
+Visual Representation:
+graph LR
+    A[Input CT Slice (2D, e.g., 128x128 RGB)] --> B{Encoder (RegNet Backbone)};
+    B -- Extracts Features & Downsamples --> C(Compressed Feature Map);
+    C --> D{Decoder (Transpose Conv Path)};
+    D -- Upsamples & Refines Features --> E[Final Decoder Features];
+    E --> F(1x1 Conv);
+    F --> G[Output Logits (1 Channel)];
+
+    subgraph Encoder [Encoder: RegNetY-400MF]
+        B
+        note B Pre-trained, Feature Extraction
+    end
+
+    subgraph Decoder [Decoder: Upsampling]
+        D
+        note D Uses ConvTranspose2d,<br/>Increases Resolution
+    end
+
+    style F fill:#ccddff
+    style G fill:#ffeedd
+Use code with caution.
+Mermaid
+How to use:
+Copy the text above the ````mermaid` line.
+Copy the entire Mermaid code block (from mermaid` to the closing).
+Paste both into your README.md file where you want the architecture section. GitHub will automatically render the Mermaid diagram below the text description.
